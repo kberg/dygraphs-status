@@ -41,7 +41,7 @@ else
   if [ $rescan == 0 ] ; then
     # Run the tests
     git checkout ${commit}
-    if [ $? == 1 ] ; then	
+    if [ $? == 1 ] ; then
       echo Fatal: could not check out ${commit}
       exit 1
     fi
@@ -68,7 +68,7 @@ else
   # Test for Failure
   test_fail=$(tail -2 ${dest}/test | head -1)
   if [ "${test_fail}" == "FAIL" ] ; then
-	test_results=FAIL
+    test_results=FAIL
   fi
 
   # Test for "no such file or directory"
@@ -77,13 +77,13 @@ else
     test_results=n/a
     test_text=n/a
   else
-	passed=$(grep "test.s. passed" ${dest}/test | head -1 | sed 's/ test.*$//')
-	failed=$(grep "test.s. failed" ${dest}/test | head -1 | sed 's/ test.*$//')
-	if [ "$failed" == "0" ] ; then
+    passed=$(grep "test.s. passed" ${dest}/test | head -1 | sed 's/ test.*$//')
+    failed=$(grep "test.s. failed" ${dest}/test | head -1 | sed 's/ test.*$//')
+    if [ "$failed" == "0" ] ; then
       test_text="$passed P"
     else
       test_text="$passed P / $failed F"
-	fi
+    fi
   fi
 
   populateJson

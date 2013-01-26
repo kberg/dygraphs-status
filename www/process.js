@@ -17,12 +17,12 @@ function buildTable() {
   }
 
   var clean = function(text) {
-	var repl = function(text, x, y) {
-	  while (text.indexOf(x) > 0) {
-		text = text.replace(x, y);
+    var repl = function(text, x, y) {
+      while (text.indexOf(x) > 0) {
+        text = text.replace(x, y);
       }
       return text;
-	}
+    }
     text = repl(text, "<", "&lt;");
     return repl(text, ">", "&gt;");
   }
