@@ -24,6 +24,7 @@ function populateJson() {
     id : '$commit',
     author : '$author',
     test : '$test_results',
+    testText : '$test_text',
     lint : 'PENDING'
   });
 EOE
@@ -74,6 +75,15 @@ else
   found_nsfod=$(echo $test_results | grep "No such file or directory" | wc -l)
   if [ $found_nsfod == 1 ] ; then
     test_results=n/a
+    test_text=n/a
+  else
+	passed=$(grep "test.s. passed" ${dest}/test | head -1 | sed 's/ test.*$//')
+	failed=$(grep "test.s. failed" ${dest}/test | head -1 | sed 's/ test.*$//')
+	if [ "$failed" == "0" ] ; then
+      test_text="$passed P"
+    else
+      test_text="$passed P / $failed F"
+	fi
   fi
 
   populateJson

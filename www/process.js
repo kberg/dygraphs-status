@@ -35,7 +35,7 @@ function buildTable() {
 
     var tr = document.createElement("tr");
     createTd(tr, createHistoryLink(id, id, "log"));
-    var testTd = createTd(tr, createHistoryLink(test, id, "test"));
+    var testTd = createTd(tr, createHistoryLink(result.testText, id, "test"));
     if (test.toUpperCase() == "FAIL") {
       testTd.className = "test-fail test";
     } else if (test.toUpperCase() == "PASS") {
