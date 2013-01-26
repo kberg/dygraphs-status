@@ -1,0 +1,11 @@
+#!/bin/sh
+. scripts/setup
+
+dir=$1
+since=$2
+if [ "${since}" == "" ] ; then
+  echo Usage $0 git-directory commitid 1>&2
+  exit 1
+else
+  gg ${dir} log --reverse --pretty=%H ${since}..
+fi

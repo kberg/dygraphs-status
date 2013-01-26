@@ -1,0 +1,15 @@
+#!/bin/sh
+
+# Usage: gg directory git command
+function gg {
+  orig=$(pwd)
+  dir=$1
+  shift
+  cd $dir
+  if [ $? == 1 ] ; then
+    echo "bad directory $dir" 1>&2
+  else
+    git $*
+    cd ${orig}
+  fi
+}
