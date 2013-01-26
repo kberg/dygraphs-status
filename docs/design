@@ -9,9 +9,7 @@ www/
    /history/<commit id>
    /history/<commit id>/log
    /history/<commit id>/test
-   /history/<commit id>/test.rc
    /history/<commit id>/lint
-   /history/<commit id>/lint.rc
 scripts/
        /run-commit
        /find-commits

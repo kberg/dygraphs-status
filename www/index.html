@@ -4,15 +4,31 @@
   <title>Test results</title>
   <script type="text/javascript" src="index.json"></script>
   <script type="text/javascript" src="process.js"></script>
+  <style type="text/css">
+  td.test-pass {
+    background-color: green;
+  }
+  td.test-fail {
+    background-color: red;
+  }
+  td.test-unknown {
+    background-color: yellow;
+  }
+  td.test a {
+    color: black;
+  }
+  </style>
+
 </head>
 <body>
   <table border="1">
     <tbody id="table">
       <tr>
         <th>Commit</th>
-        <th>Description</th>
         <th>Tests</th>
         <th>Lint</th>
+        <th>Author</th>
+        <th>Github</th>
       </tr>
     </tbody>
   </table>

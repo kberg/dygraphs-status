@@ -1,6 +1,12 @@
 #!/bin/sh
 . scripts/setup
 
+rescan=0
+if [ "$1" == "--rescan" ] ; then
+  rescan=1
+  shift
+fi
+
 dir=$1
 commit=$2
 
@@ -10,18 +16,17 @@ dest=${history}/${commit}
 json=${current}/www/index.json
 
 function populateJson() {
-set +x
   if [ ! -f $json ] ; then
     echo "jsonResults = []" > ${json}
   fi
   cat >> ${json} <<EOE
   jsonResults.push({
     id : '$commit',
+    author : '$author',
     test : '$test_results',
     lint : 'PENDING'
   });
 EOE
-set -x
 }
 
 if [ "${commit}" == "" ] ; then
@@ -30,22 +35,50 @@ if [ "${commit}" == "" ] ; then
 else
   mkdir -p ${history}
 
-  mkdir ${dest}
-  if [ $? == 1 ] ; then
-    echo Fatal: commit exists $commit
-    exit 1
-  fi
-
   cd $dir
 
-  # Run the tests
-  git checkout ${commit}
-  if [ $? == 0 ] ; then
+  if [ $rescan == 0 ] ; then
+    # Run the tests
+    git checkout ${commit}
+    if [ $? == 1 ] ; then	
+      echo Fatal: could not check out ${commit}
+      exit 1
+    fi
+
+    mkdir ${dest}
+    if [ $? == 1 ] ; then
+      echo Fatal: commit exists $commit
+      exit 1
+    fi
+
     git log -1 $commit > ${dest}/log
     ./test.sh > ${dest}/test 2>&1
     ./lint.sh > ${dest}/lint 2>&1
-    test_results=$(tail -1 ${dest}/test)
-    populateJson
   fi
-  cd -
+
+  author=$(grep Author ${dest}/log | head -1 | sed 's/^Author: *//')
+
+  # There's a bug in test.sh; it prints FAIL then PASS.
+  # So, we should check that.
+  # Also check return code
+  # If the last line is PASs
+  test_results=$(tail -1 ${dest}/test)
+
+  # Test for Failure
+  test_fail=$(tail -2 ${dest}/test | head -1)
+  if [ "${test_fail}" == "FAIL" ] ; then
+	test_results=FAIL
+  fi
+
+  # Test for "no such file or directory"
+  found_nsfod=$(echo $test_results | grep "No such file or directory" | wc -l)
+  if [ $found_nsfod == 1 ] ; then
+    test_results=n/a
+  fi
+
+  populateJson
+
+  cd - >/dev/null
+
+  exit 0
 fi
