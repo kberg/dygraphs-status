@@ -1,0 +1,51 @@
+#!/bin/sh
+. scripts/setup
+
+dir=$1
+commit=$2
+
+current=$(pwd)
+history=${current}/history/
+dest=${history}/${commit}
+json=${current}/www/index.json
+
+function populateJson() {
+set +x
+  if [ ! -f $json ] ; then
+    echo "jsonResults = []" > ${json}
+  fi
+  cat >> ${json} <<EOE
+  jsonResults.push({
+    id : '$commit',
+    test : '$test_results',
+    lint : 'PENDING'
+  });
+EOE
+set -x
+}
+
+if [ "${commit}" == "" ] ; then
+  echo Usage $0 git-directory commitid 1>&2
+  exit 1
+else
+  mkdir -p ${history}
+
+  mkdir ${dest}
+  if [ $? == 1 ] ; then
+    echo Fatal: commit exists $commit
+    exit 1
+  fi
+
+  cd $dir
+
+  # Run the tests
+  git checkout ${commit}
+  if [ $? == 0 ] ; then
+    git log -1 $commit > ${dest}/log
+    ./test.sh > ${dest}/test 2>&1
+    ./lint.sh > ${dest}/lint 2>&1
+    test_results=$(tail -1 ${dest}/test)
+    populateJson
+  fi
+  cd -
+fi
