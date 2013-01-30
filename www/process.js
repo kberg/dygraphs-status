@@ -34,7 +34,11 @@ function buildTable() {
     var lint = result.lint;
 
     var tr = document.createElement("tr");
-    createTd(tr, createHistoryLink(id, id, "log"));
+    createTd(tr,
+        createHistoryLink(id.substr(0, 6), id, "log") + "&nbsp;" + 
+        createLink("gh", "http://www.github.com/danvk/dygraphs/commit/" + id));
+    createTd(tr, new Date(Date.parse(result.date))); // TODO(show original date?)
+
     var testTd = createTd(tr, createHistoryLink(result.testText, id, "test"));
     if (test.toUpperCase() == "FAIL") {
       testTd.className = "test-fail test";
@@ -43,9 +47,10 @@ function buildTable() {
     } else {
       testTd.className = "test-unknown test";
     }
+
     createTd(tr, createHistoryLink(lint, id, "lint"));
     createTd(tr, clean(result.author));
-    createTd(tr, createLink("gh", "http://www.github.com/danvk/dygraphs/commit/" + id));
+    createTd(tr, result.description.substr(0, 80));
 
     tdata.appendChild(tr);
   }

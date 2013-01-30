@@ -17,15 +17,17 @@ json=${current}/www/index.json
 
 function populateJson() {
   if [ ! -f $json ] ; then
-    echo "jsonResults = []" > ${json}
+    echo "jsonResults = [];" > ${json}
   fi
   cat >> ${json} <<EOE
   jsonResults.push({
     id : '$commit',
     author : '$author',
+    description : '$description',
+    date : '$date',
     test : '$test_results',
     testText : '$test_text',
-    lint : 'PENDING'
+    lint : 'tbd'
   });
 EOE
 }
@@ -52,12 +54,17 @@ else
       exit 1
     fi
 
+    # TODO(konigsberg): have the filenames listed in the log entry.
     git log -1 $commit > ${dest}/log
     ./test.sh > ${dest}/test 2>&1
     ./lint.sh > ${dest}/lint 2>&1
   fi
 
   author=$(grep Author ${dest}/log | head -1 | sed 's/^Author: *//')
+  date=$(grep Date ${dest}/log | head -1 | sed 's/^Date: *//')
+
+  # The sed command escapes the single quotes.
+  description=$(head -5 ${dest}/log | tail -1 | sed "s/'/\\\\'/g")
 
   # There's a bug in test.sh; it prints FAIL then PASS.
   # So, we should check that.
