@@ -1,0 +1,32 @@
+#!/bin/sh
+
+rescan_flag=""
+if [ "$1" == "--rescan" ] ; then
+  rescan_flag=$1
+  shift
+fi
+
+repository=$1
+if [ "$repository" == "" ] ; then
+  echo "Usage: $0 [--rescan] repository"
+  exit 1
+fi
+
+since=$(cat history/.last)
+
+#bootstrap
+if [ "$since" == "" ] ; then
+  since=86a3e64f8f73d854b3b4ac35f52b54bfda3056a4
+fi
+
+commits=$(scripts/find-commits ${repository} $since)
+for commit in $commits ; do
+  echo $commit
+  ./scripts/run-commit ${rescan_flag} ${repository} ${commit}
+  if [ $? != 0 ] ; then
+    echo Aborting
+    exit 1
+  fi
+  # Perhaps history/.last should be named by branch? history/branch.last?
+  echo ${commit} > history/.last
+done
