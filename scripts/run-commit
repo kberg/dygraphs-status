@@ -63,8 +63,8 @@ else
   author=$(grep Author ${dest}/log | head -1 | sed 's/^Author: *//')
   date=$(grep Date ${dest}/log | head -1 | sed 's/^Date: *//')
 
-  # The sed command escapes the single quotes.
-  description=$(grep "^ " ${dest}/log | head -1 | sed "s/'/\\\\'/g")
+  # Remove leading whitespace and escape single quotes.
+  description=$(grep "^ " ${dest}/log | head -1 | sed "s/'/\\\\'/g" | sed s'/^  *//')
 
   # There's a bug in test.sh; it prints FAIL then PASS.
   # So, we should check that.
