@@ -27,7 +27,7 @@ function populateJson() {
     date : '$date',
     test : '$test_results',
     testText : '$test_text',
-    lint : 'tbd'
+    lint : '$lint_results'
   });
 EOE
 }
@@ -91,6 +91,13 @@ else
     else
       test_text="$passed P / $failed F"
     fi
+  fi
+
+  lint_count=$(cat ${dest}/lint | grep -v "Running JSHint w. JavaScriptCore (jsc)" | grep -v "^.jshint.*passed.$" | wc -l)
+  if [ $lint_count == 0 ] ; then
+    lint_results=:\)
+  else
+    lint_results=:\(
   fi
 
   populateJson

@@ -48,7 +48,13 @@ function buildTable() {
       testTd.className = "test-unknown test";
     }
 
-    createTd(tr, createHistoryLink(lint, id, "lint"));
+    var lintTd = createTd(tr, createHistoryLink(lint, id, "lint"));
+    if (lint === ":)") {
+      lintTd.className = "lint-pass lint";
+    } else {
+      lintTd.className = "lint-fail lint";
+    }
+
     createTd(tr, clean(result.author));
     createTd(tr, result.description.substr(0, 80));
 
